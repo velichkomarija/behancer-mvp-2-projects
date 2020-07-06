@@ -6,6 +6,7 @@ import android.arch.persistence.room.Ignore;
 import android.arch.persistence.room.PrimaryKey;
 import android.support.annotation.NonNull;
 
+import com.elegion.test.behancer.utils.DateUtils;
 import com.google.gson.annotations.SerializedName;
 
 @Entity
@@ -62,6 +63,10 @@ public class User {
 
     public long getCreatedOn() {
         return mCreatedOn;
+    }
+
+    public String getCreatedOnString() {
+        return DateUtils.format(mCreatedOn);
     }
 
     public void setCreatedOn(long createdOn) {
