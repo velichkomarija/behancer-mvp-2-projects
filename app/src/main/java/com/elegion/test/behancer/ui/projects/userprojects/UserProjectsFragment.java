@@ -1,7 +1,6 @@
-package com.elegion.test.behancer.ui.projects;
+package com.elegion.test.behancer.ui.projects.userprojects;
 
 import android.content.Context;
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -15,33 +14,44 @@ import com.arellomobile.mvp.InjectViewState;
 import com.arellomobile.mvp.presenter.InjectPresenter;
 import com.arellomobile.mvp.presenter.ProvidePresenter;
 import com.elegion.test.behancer.R;
-import com.elegion.test.behancer.data.model.project.Project;
 import com.elegion.test.behancer.common.PresenterFragment;
-import com.elegion.test.behancer.ui.profile.ProfileActivity;
-import com.elegion.test.behancer.ui.profile.ProfileFragment;
 import com.elegion.test.behancer.common.RefreshOwner;
 import com.elegion.test.behancer.common.Refreshable;
 import com.elegion.test.behancer.data.Storage;
+import com.elegion.test.behancer.data.model.project.Project;
+import com.elegion.test.behancer.ui.projects.ProjectsAdapter;
+import com.elegion.test.behancer.ui.projects.ProjectsPresenter;
+import com.elegion.test.behancer.ui.projects.ProjectsView;
 
 import java.util.List;
 
-public class ProjectsFragment extends PresenterFragment implements Refreshable, ProjectsView, ProjectsAdapter.OnItemClickListener  {
+import static com.elegion.test.behancer.ui.profile.ProfileFragment.PROFILE_KEY;
+
+public class UserProjectsFragment extends PresenterFragment implements Refreshable, ProjectsView, ProjectsAdapter.OnItemClickListener  {
 
     private RecyclerView mRecyclerView;
     private RefreshOwner mRefreshOwner;
     private View mErrorView;
     private Storage mStorage;
     private ProjectsAdapter mProjectsAdapter;
+    private String mUsername;
 
     @InjectPresenter
     ProjectsPresenter mPresenter;
 
     @ProvidePresenter
-    ProjectsPresenter  providePresenter() {
+    ProjectsPresenter providePresenter() {
         return new ProjectsPresenter(mStorage);
     }
-    public static ProjectsFragment newInstance() {
-        return new ProjectsFragment();
+
+    protected ProjectsPresenter getPresenter() {
+        return mPresenter;
+    }
+
+    public static UserProjectsFragment newInstance(Bundle args) {
+        UserProjectsFragment fragment = new UserProjectsFragment();
+        fragment.setArguments(args);
+        return fragment;
     }
 
     @Override
@@ -72,8 +82,12 @@ public class ProjectsFragment extends PresenterFragment implements Refreshable, 
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
+        if (getArguments() != null) {
+            mUsername = getArguments().getString(PROFILE_KEY);
+        }
+
         if (getActivity() != null) {
-            getActivity().setTitle(R.string.projects);
+            getActivity().setTitle(mUsername);
         }
 
         mProjectsAdapter = new ProjectsAdapter(this);
@@ -81,11 +95,6 @@ public class ProjectsFragment extends PresenterFragment implements Refreshable, 
         mRecyclerView.setAdapter(mProjectsAdapter);
 
         onRefreshData();
-    }
-
-    @Override
-    protected ProjectsPresenter getPresenter() {
-        return mPresenter;
     }
 
     @Override
@@ -97,7 +106,7 @@ public class ProjectsFragment extends PresenterFragment implements Refreshable, 
 
     @Override
     public void onRefreshData() {
-        mPresenter.getProjects();
+        mPresenter.getUserProjects(mUsername);
     }
 
     @Override
@@ -118,12 +127,6 @@ public class ProjectsFragment extends PresenterFragment implements Refreshable, 
 
     @Override
     public void openDetailFragment(@NonNull String username) {
-        Intent intent = new Intent(getActivity(), ProfileActivity.class);
-        Bundle args = new Bundle();
-        args.putString(ProfileFragment.PROFILE_KEY, username);
-        intent.putExtra(ProfileActivity.USERNAME_KEY, args);
-        startActivity(intent);
-
     }
 
     @Override
@@ -135,6 +138,5 @@ public class ProjectsFragment extends PresenterFragment implements Refreshable, 
 
     @Override
     public void onItemClick(String username) {
-        mPresenter.openProfileFragment(username);
     }
 }

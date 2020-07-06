@@ -11,5 +11,5 @@ public interface ProjectsView extends BaseView {
 
     void showProjects(@NonNull List<Project> projects);
 
-    void openProfileFragment(@NonNull String username);
+    void openDetailFragment(@NonNull String username);
 }

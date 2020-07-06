@@ -48,4 +48,14 @@
         android:layout_alignStart="@id/tv_created_on_details"
         android:layout_below="@id/tv_created_on_details" />
 
+    <Button
+        android:id="@+id/go_to_projects_btn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@id/tv_created_on_details"
+        android:layout_alignStart="@id/tv_created_on_details"
+        android:layout_below="@id/tv_location_details"
+        android:text="@string/user_project"
+        android:padding="8dp" />
+
 </RelativeLayout>

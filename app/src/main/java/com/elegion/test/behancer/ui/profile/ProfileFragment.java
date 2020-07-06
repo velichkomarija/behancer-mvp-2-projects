@@ -1,17 +1,22 @@
 package com.elegion.test.behancer.ui.profile;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.arellomobile.mvp.presenter.InjectPresenter;
+import com.arellomobile.mvp.presenter.ProvidePresenter;
 import com.elegion.test.behancer.R;
 import com.elegion.test.behancer.common.PresenterFragment;
+import com.elegion.test.behancer.ui.projects.userprojects.UserProjectsActivity;
 import com.elegion.test.behancer.common.RefreshOwner;
 import com.elegion.test.behancer.common.Refreshable;
 import com.elegion.test.behancer.data.Storage;
@@ -19,7 +24,7 @@ import com.elegion.test.behancer.data.model.user.User;
 import com.elegion.test.behancer.utils.DateUtils;
 import com.squareup.picasso.Picasso;
 
-public class ProfileFragment extends PresenterFragment<ProfilePresenter> implements Refreshable, ProfileView {
+public class ProfileFragment extends PresenterFragment implements Refreshable, ProfileView , View.OnClickListener{
 
     public static final String PROFILE_KEY = "PROFILE_KEY";
 
@@ -28,12 +33,20 @@ public class ProfileFragment extends PresenterFragment<ProfilePresenter> impleme
     private View mProfileView;
     private String mUsername;
     private Storage mStorage;
-    private ProfilePresenter mPresenter;
 
     private ImageView mProfileImage;
     private TextView mProfileName;
     private TextView mProfileCreatedOn;
     private TextView mProfileLocation;
+    private Button mShowAllProjects;
+
+    @InjectPresenter
+    ProfilePresenter mPresenter;
+
+    @ProvidePresenter
+    ProfilePresenter providePresenter() {
+        return new ProfilePresenter(mStorage);
+    }
 
     public static ProfileFragment newInstance(Bundle args) {
         ProfileFragment fragment = new ProfileFragment();
@@ -64,6 +77,8 @@ public class ProfileFragment extends PresenterFragment<ProfilePresenter> impleme
         mProfileName = view.findViewById(R.id.tv_display_name_details);
         mProfileCreatedOn = view.findViewById(R.id.tv_created_on_details);
         mProfileLocation = view.findViewById(R.id.tv_location_details);
+        mShowAllProjects = view.findViewById(R.id.go_to_projects_btn);
+        mShowAllProjects.setOnClickListener(this);
     }
 
     @Override
@@ -80,15 +95,24 @@ public class ProfileFragment extends PresenterFragment<ProfilePresenter> impleme
 
         mProfileView.setVisibility(View.VISIBLE);
 
-        mPresenter = new ProfilePresenter(this, mStorage, mUsername);
         onRefreshData();
     }
 
     @Override
     public void onRefreshData() {
-        mPresenter.getProjects();
+        mPresenter.getProfile(mUsername);
     }
 
+    @Override
+    public void onClick(View view) {
+        if (R.id.go_to_projects_btn == view.getId()) {
+            Intent intent = new Intent(getActivity(), UserProjectsActivity.class);
+            Bundle args = new Bundle();
+            args.putString(ProfileFragment.PROFILE_KEY, mUsername);
+            intent.putExtra(ProfileActivity.USERNAME_KEY, args);
+            startActivity(intent);
+        }
+    }
 
     private void bind(User user) {
         Picasso.with(getContext())

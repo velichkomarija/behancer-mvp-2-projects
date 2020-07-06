@@ -18,7 +18,7 @@ public class ProjectsAdapter extends RecyclerView.Adapter<ProjectsHolder> {
     private final List<Project> mProjects = new ArrayList<>();
     private final OnItemClickListener mOnItemClickListener;
 
-    ProjectsAdapter(OnItemClickListener onItemClickListener) {
+    public ProjectsAdapter(OnItemClickListener onItemClickListener) {
         mOnItemClickListener = onItemClickListener;
     }
 
@@ -41,7 +41,7 @@ public class ProjectsAdapter extends RecyclerView.Adapter<ProjectsHolder> {
         return mProjects.size();
     }
 
-    void addData(List<Project> data, boolean isRefreshed) {
+    public void addData(List<Project> data, boolean isRefreshed) {
         if (isRefreshed) {
             mProjects.clear();
         }
