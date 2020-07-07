@@ -12,6 +12,10 @@
             name="vm"
             type="com.elegion.test.behancer.ui.profile.ProfileViewModel" />
 
+        <variable
+            name="onClickListener"
+            type="com.elegion.test.behancer.ui.profile.ProfileFragment.OnClickListener" />
+
     </data>
 
     <android.support.v4.widget.SwipeRefreshLayout
@@ -83,6 +87,16 @@
                         android:layout_below="@id/tv_created_on_details"
                         android:layout_alignStart="@id/tv_created_on_details"
                         android:layout_alignLeft="@id/tv_created_on_details" />
+
+                    <Button
+                        android:id="@+id/showUserProjects"
+                        android:onClick="@{()->onClickListener.onClick(vm.username)}"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/user_project"
+                        android:layout_alignLeft="@id/tv_location_details"
+                        android:layout_alignStart="@id/tv_location_details"
+                        android:layout_below="@id/tv_location_details" />
 
                 </RelativeLayout>
             </LinearLayout>

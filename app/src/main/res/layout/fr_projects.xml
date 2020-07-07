@@ -9,8 +9,8 @@
             type="android.view.View" />
 
         <variable
-            name="vm"
-            type="com.elegion.test.behancer.ui.projects.ProjectsViewModel" />
+            name="bvm"
+            type="com.elegion.test.behancer.ui.projects.commonprojectsui.BaseViewModel" />
 
     </data>
 
@@ -18,8 +18,8 @@
         android:id="@+id/refresher"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        bind:onRefresh="@{vm.onRefreshListener}"
-        bind:refreshState="@{vm.isLoading}">
+        bind:onRefresh="@{bvm.onRefreshListener}"
+        bind:refreshState="@{bvm.isLoading}">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -30,13 +30,13 @@
                 android:id="@+id/recycler"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:visibility="@{vm.isErrorVisible ? V.GONE : V.VISIBLE}"
-                bind:clickHandler="@{vm.onItemClickListener}"
-                bind:data="@{vm.projects}" />
+                android:visibility="@{bvm.isErrorVisible ? V.GONE : V.VISIBLE}"
+                bind:clickHandler="@{bvm.onItemClickListener}"
+                bind:data="@{bvm.projects}" />
 
             <include
                 layout="@layout/v_error"
-                android:visibility="@{vm.isErrorVisible ? V.VISIBLE : V.GONE}" />
+                android:visibility="@{bvm.isErrorVisible ? V.VISIBLE : V.GONE}" />
 
         </LinearLayout>
 

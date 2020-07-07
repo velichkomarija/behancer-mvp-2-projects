@@ -10,7 +10,7 @@ public class ProjectsActivity extends SingleFragmentActivity implements Storage.
 
     @Override
     protected Fragment getFragment() {
-        return ProjectsFragment.newInstance();
+        return new ProjectsFragment().newInstance(null);
     }
 
     @Override
