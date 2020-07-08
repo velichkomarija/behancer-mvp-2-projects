@@ -12,7 +12,7 @@ import com.elegion.test.behancer.R;
 import com.elegion.test.behancer.data.Storage;
 
 public abstract class SingleFragmentActivity extends AppCompatActivity
-        implements Storage.StorageOwner, SwipeRefreshLayout.OnRefreshListener, RefreshOwner {
+        implements SwipeRefreshLayout.OnRefreshListener, RefreshOwner {
 
     private SwipeRefreshLayout mSwipeRefreshLayout;
 
@@ -30,11 +30,6 @@ public abstract class SingleFragmentActivity extends AppCompatActivity
     }
 
     protected abstract Fragment getFragment();
-
-    @Override
-    public Storage obtainStorage() {
-        return ((AppDelegate) getApplicationContext()).getStorage();
-    }
 
     public void changeFragment(Fragment fragment) {
         boolean addToBackStack = getSupportFragmentManager().findFragmentById(R.id.fragmentContainer) != null;

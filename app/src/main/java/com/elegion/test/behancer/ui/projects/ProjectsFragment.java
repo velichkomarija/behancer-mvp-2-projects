@@ -11,49 +11,55 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.arellomobile.mvp.InjectViewState;
 import com.arellomobile.mvp.presenter.InjectPresenter;
 import com.arellomobile.mvp.presenter.ProvidePresenter;
+import com.elegion.test.behancer.AppDelegate;
 import com.elegion.test.behancer.R;
-import com.elegion.test.behancer.data.model.project.Project;
 import com.elegion.test.behancer.common.PresenterFragment;
-import com.elegion.test.behancer.ui.profile.ProfileActivity;
-import com.elegion.test.behancer.ui.profile.ProfileFragment;
 import com.elegion.test.behancer.common.RefreshOwner;
 import com.elegion.test.behancer.common.Refreshable;
-import com.elegion.test.behancer.data.Storage;
+import com.elegion.test.behancer.data.model.project.Project;
+import com.elegion.test.behancer.ui.profile.ProfileActivity;
+import com.elegion.test.behancer.ui.profile.ProfileFragment;
 
 import java.util.List;
 
-public class ProjectsFragment extends PresenterFragment implements Refreshable, ProjectsView, ProjectsAdapter.OnItemClickListener  {
+import javax.inject.Inject;
+
+public class ProjectsFragment extends PresenterFragment implements Refreshable, ProjectsView, ProjectsAdapter.OnItemClickListener {
+
+    @InjectPresenter
+    @Inject
+    ProjectsPresenter mPresenter;
 
     private RecyclerView mRecyclerView;
     private RefreshOwner mRefreshOwner;
     private View mErrorView;
-    private Storage mStorage;
     private ProjectsAdapter mProjectsAdapter;
 
-    @InjectPresenter
-    ProjectsPresenter mPresenter;
-
-    @ProvidePresenter
-    ProjectsPresenter  providePresenter() {
-        return new ProjectsPresenter(mStorage);
-    }
     public static ProjectsFragment newInstance() {
         return new ProjectsFragment();
+    }
+
+    @ProvidePresenter
+    @Override
+    protected ProjectsPresenter getPresenter() {
+        return mPresenter;
     }
 
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        if (context instanceof Storage.StorageOwner) {
-            mStorage = ((Storage.StorageOwner) context).obtainStorage();
-        }
 
         if (context instanceof RefreshOwner) {
             mRefreshOwner = ((RefreshOwner) context);
         }
+    }
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        AppDelegate.getAppComponent().inject(this);
     }
 
     @Nullable
@@ -76,6 +82,8 @@ public class ProjectsFragment extends PresenterFragment implements Refreshable, 
             getActivity().setTitle(R.string.projects);
         }
 
+        AppDelegate.getAppComponent().inject(this);
+        mPresenter.setView(this);
         mProjectsAdapter = new ProjectsAdapter(this);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         mRecyclerView.setAdapter(mProjectsAdapter);
@@ -84,13 +92,7 @@ public class ProjectsFragment extends PresenterFragment implements Refreshable, 
     }
 
     @Override
-    protected ProjectsPresenter getPresenter() {
-        return mPresenter;
-    }
-
-    @Override
     public void onDetach() {
-        mStorage = null;
         mRefreshOwner = null;
         super.onDetach();
     }

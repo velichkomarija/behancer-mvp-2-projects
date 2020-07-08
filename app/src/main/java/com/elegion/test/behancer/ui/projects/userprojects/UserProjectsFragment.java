@@ -10,9 +10,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.arellomobile.mvp.InjectViewState;
 import com.arellomobile.mvp.presenter.InjectPresenter;
 import com.arellomobile.mvp.presenter.ProvidePresenter;
+import com.elegion.test.behancer.AppDelegate;
 import com.elegion.test.behancer.R;
 import com.elegion.test.behancer.common.PresenterFragment;
 import com.elegion.test.behancer.common.RefreshOwner;
@@ -25,10 +25,15 @@ import com.elegion.test.behancer.ui.projects.ProjectsView;
 
 import java.util.List;
 
+import javax.inject.Inject;
+
 import static com.elegion.test.behancer.ui.profile.ProfileFragment.PROFILE_KEY;
 
-public class UserProjectsFragment extends PresenterFragment implements Refreshable, ProjectsView, ProjectsAdapter.OnItemClickListener  {
+public class UserProjectsFragment extends PresenterFragment implements Refreshable, ProjectsView, ProjectsAdapter.OnItemClickListener {
 
+    @InjectPresenter
+    @Inject
+    ProjectsPresenter mPresenter;
     private RecyclerView mRecyclerView;
     private RefreshOwner mRefreshOwner;
     private View mErrorView;
@@ -36,30 +41,21 @@ public class UserProjectsFragment extends PresenterFragment implements Refreshab
     private ProjectsAdapter mProjectsAdapter;
     private String mUsername;
 
-    @InjectPresenter
-    ProjectsPresenter mPresenter;
-
-    @ProvidePresenter
-    ProjectsPresenter providePresenter() {
-        return new ProjectsPresenter(mStorage);
-    }
-
-    protected ProjectsPresenter getPresenter() {
-        return mPresenter;
-    }
-
     public static UserProjectsFragment newInstance(Bundle args) {
         UserProjectsFragment fragment = new UserProjectsFragment();
         fragment.setArguments(args);
         return fragment;
     }
 
+    @ProvidePresenter
+    @Override
+    protected ProjectsPresenter getPresenter() {
+        return mPresenter;
+    }
+
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        if (context instanceof Storage.StorageOwner) {
-            mStorage = ((Storage.StorageOwner) context).obtainStorage();
-        }
 
         if (context instanceof RefreshOwner) {
             mRefreshOwner = ((RefreshOwner) context);
@@ -89,6 +85,9 @@ public class UserProjectsFragment extends PresenterFragment implements Refreshab
         if (getActivity() != null) {
             getActivity().setTitle(mUsername);
         }
+
+        AppDelegate.getAppComponent().inject(this);
+        mPresenter.setView(this);
 
         mProjectsAdapter = new ProjectsAdapter(this);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
