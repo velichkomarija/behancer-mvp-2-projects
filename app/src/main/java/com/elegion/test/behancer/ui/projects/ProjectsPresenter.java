@@ -55,10 +55,10 @@ public class ProjectsPresenter extends BasePresenter<ProjectsView> {
                                 throwable -> mView.showError())
         );
     }
+
     public void setView(ProjectsView view) {
         mView = view;
     }
-
     void openProfileFragment(String username) {
         mView.openDetailFragment(username);
     }

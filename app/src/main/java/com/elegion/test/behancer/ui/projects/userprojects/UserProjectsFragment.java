@@ -11,7 +11,6 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.arellomobile.mvp.presenter.InjectPresenter;
-import com.arellomobile.mvp.presenter.ProvidePresenter;
 import com.elegion.test.behancer.AppDelegate;
 import com.elegion.test.behancer.R;
 import com.elegion.test.behancer.common.PresenterFragment;
@@ -26,6 +25,8 @@ import com.elegion.test.behancer.ui.projects.ProjectsView;
 import java.util.List;
 
 import javax.inject.Inject;
+
+import toothpick.Toothpick;
 
 import static com.elegion.test.behancer.ui.profile.ProfileFragment.PROFILE_KEY;
 
@@ -47,7 +48,6 @@ public class UserProjectsFragment extends PresenterFragment implements Refreshab
         return fragment;
     }
 
-    @ProvidePresenter
     @Override
     protected ProjectsPresenter getPresenter() {
         return mPresenter;
@@ -86,7 +86,7 @@ public class UserProjectsFragment extends PresenterFragment implements Refreshab
             getActivity().setTitle(mUsername);
         }
 
-        AppDelegate.getAppComponent().inject(this);
+        Toothpick.inject(this, AppDelegate.getsAppScope());
         mPresenter.setView(this);
 
         mProjectsAdapter = new ProjectsAdapter(this);

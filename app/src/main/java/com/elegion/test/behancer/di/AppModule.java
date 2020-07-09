@@ -6,27 +6,18 @@ import com.elegion.test.behancer.AppDelegate;
 import com.elegion.test.behancer.data.Storage;
 import com.elegion.test.behancer.data.database.BehanceDatabase;
 
+import toothpick.config.Module;
 
-import dagger.Module;
-import dagger.Provides;
-
-@Module
-public class AppModule {
+public class AppModule extends Module {
 
     private final AppDelegate mApp;
 
     public AppModule(AppDelegate mApp) {
         this.mApp = mApp;
+        bind(AppDelegate.class).toInstance(mApp);
+        bind(Storage.class).toInstance(provideStorage());
     }
 
-    @Provides
-    @FragmentScope
-    AppDelegate provideApp() {
-        return mApp;
-    }
-
-    @Provides
-    @FragmentScope
     Storage provideStorage() {
         final BehanceDatabase database = Room.databaseBuilder(mApp, BehanceDatabase.class, "behance_database")
                 .fallbackToDestructiveMigration()

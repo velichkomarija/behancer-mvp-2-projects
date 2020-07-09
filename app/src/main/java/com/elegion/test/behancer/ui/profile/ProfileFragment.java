@@ -13,16 +13,19 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.arellomobile.mvp.presenter.InjectPresenter;
-import com.arellomobile.mvp.presenter.ProvidePresenter;
+import com.elegion.test.behancer.AppDelegate;
 import com.elegion.test.behancer.R;
 import com.elegion.test.behancer.common.PresenterFragment;
 import com.elegion.test.behancer.ui.projects.userprojects.UserProjectsActivity;
 import com.elegion.test.behancer.common.RefreshOwner;
 import com.elegion.test.behancer.common.Refreshable;
-import com.elegion.test.behancer.data.Storage;
 import com.elegion.test.behancer.data.model.user.User;
 import com.elegion.test.behancer.utils.DateUtils;
 import com.squareup.picasso.Picasso;
+
+import javax.inject.Inject;
+
+import toothpick.Toothpick;
 
 public class ProfileFragment extends PresenterFragment implements Refreshable, ProfileView , View.OnClickListener{
 
@@ -32,7 +35,6 @@ public class ProfileFragment extends PresenterFragment implements Refreshable, P
     private View mErrorView;
     private View mProfileView;
     private String mUsername;
-    private Storage mStorage;
 
     private ImageView mProfileImage;
     private TextView mProfileName;
@@ -41,17 +43,12 @@ public class ProfileFragment extends PresenterFragment implements Refreshable, P
     private Button mShowAllProjects;
 
     @InjectPresenter
+    @Inject
     ProfilePresenter mPresenter;
-
-    @ProvidePresenter
-    ProfilePresenter providePresenter() {
-        return new ProfilePresenter(mStorage);
-    }
 
     public static ProfileFragment newInstance(Bundle args) {
         ProfileFragment fragment = new ProfileFragment();
         fragment.setArguments(args);
-
         return fragment;
     }
 
@@ -92,6 +89,8 @@ public class ProfileFragment extends PresenterFragment implements Refreshable, P
             getActivity().setTitle(mUsername);
         }
 
+        Toothpick.inject(this, AppDelegate.getsAppScope());
+        mPresenter.setView(this);
         mProfileView.setVisibility(View.VISIBLE);
 
         onRefreshData();
@@ -130,7 +129,6 @@ public class ProfileFragment extends PresenterFragment implements Refreshable, P
 
     @Override
     public void onDetach() {
-        mStorage = null;
         mRefreshOwner = null;
         super.onDetach();
     }

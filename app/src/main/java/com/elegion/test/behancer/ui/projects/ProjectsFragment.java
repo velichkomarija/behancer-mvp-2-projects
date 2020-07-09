@@ -12,7 +12,6 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.arellomobile.mvp.presenter.InjectPresenter;
-import com.arellomobile.mvp.presenter.ProvidePresenter;
 import com.elegion.test.behancer.AppDelegate;
 import com.elegion.test.behancer.R;
 import com.elegion.test.behancer.common.PresenterFragment;
@@ -25,6 +24,8 @@ import com.elegion.test.behancer.ui.profile.ProfileFragment;
 import java.util.List;
 
 import javax.inject.Inject;
+
+import toothpick.Toothpick;
 
 public class ProjectsFragment extends PresenterFragment implements Refreshable, ProjectsView, ProjectsAdapter.OnItemClickListener {
 
@@ -41,7 +42,6 @@ public class ProjectsFragment extends PresenterFragment implements Refreshable, 
         return new ProjectsFragment();
     }
 
-    @ProvidePresenter
     @Override
     protected ProjectsPresenter getPresenter() {
         return mPresenter;
@@ -59,7 +59,6 @@ public class ProjectsFragment extends PresenterFragment implements Refreshable, 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        AppDelegate.getAppComponent().inject(this);
     }
 
     @Nullable
@@ -82,7 +81,7 @@ public class ProjectsFragment extends PresenterFragment implements Refreshable, 
             getActivity().setTitle(R.string.projects);
         }
 
-        AppDelegate.getAppComponent().inject(this);
+        Toothpick.inject(this, AppDelegate.getsAppScope());
         mPresenter.setView(this);
         mProjectsAdapter = new ProjectsAdapter(this);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
